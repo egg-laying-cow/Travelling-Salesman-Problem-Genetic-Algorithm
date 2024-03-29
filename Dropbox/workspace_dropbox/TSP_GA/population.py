@@ -26,13 +26,13 @@ class Population:
                 random.shuffle(points)
                 points.append(self.__list[0][-1])
                 self.__list.append(Individual(points))
-            self.__list.sort(key = lambda x: x.sum_distance)
+            self.__list.sort(key = lambda x: x.get_sum_distance())
         self.size = new_size
 
     def extend(self, points: list["Point"]):
         for i in range(len(self.__list)):
             self.__list[i].extend(points)
-        self.__list.sort(key = lambda x: x.sum_distance)
+        self.__list.sort(key = lambda x: x.get_sum_distance())
 
     def init_population(self, individual : "Individual") -> list:
         population = [individual]
@@ -41,7 +41,7 @@ class Population:
             random.shuffle(points)
             points.append(individual[-1])
             population.append(Individual(points))
-        population.sort(key = lambda x: x.sum_distance)
+        population.sort(key = lambda x: x.get_sum_distance())
         return population
     
     def mutate(self, child : list):
@@ -84,7 +84,7 @@ class Population:
         child.extend(temp_child[:k] + temp + temp_child[k:])
         
     def crossover(self, parent1 : "Individual", parent2 : "Individual") -> "Individual":
-        p = random.randint(1, parent1.size - 1)
+        p = random.randint(1, parent1.get_size() - 1)
         child = parent1[:p]
         for point in parent2:
             if point not in child:
@@ -105,7 +105,7 @@ class Population:
             new_population.append(child1)
             child2 = self.crossover(parent2, parent1)
             new_population.append(child2)
-        new_population.sort(key = lambda x: x.sum_distance)
+        new_population.sort(key = lambda x: x.get_sum_distance())
         return new_population
     
     def natural_selection(self, new_population : list):
@@ -121,7 +121,7 @@ class Population:
             elif (j >= len(new_population)):
                 population.append(self.__list[i])
                 i += 1
-            elif (self.__list[i].sum_distance < new_population[j].sum_distance):
+            elif (self.__list[i].get_sum_distance() < new_population[j].get_sum_distance()):
                 population.append(self.__list[i])
                 i += 1
             else:
