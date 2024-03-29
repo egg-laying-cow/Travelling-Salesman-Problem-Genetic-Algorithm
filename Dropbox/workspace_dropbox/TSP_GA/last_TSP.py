@@ -4,7 +4,7 @@ from board import Board
 from point import Point
 from individual import Individual
 from population import Population
-from constants import BACKGROUND, BLACK, WHITE
+from helper import BACKGROUND, BLACK, WHITE
 
 class TSP:
     def __init__(self):
@@ -124,7 +124,8 @@ class TSP:
 
     def render_mouse_position(self):
         if self.board.is_mouse_over(self.mouse_x, self.mouse_y):
-            text_mouse = self.font_small.render("(" + str(self.mouse_x - self.board.get_position()[0]) + "," + str(self.mouse_y - self.board.get_position()[1]) + ")",True, BLACK)
+            text_mouse = self.font_small.render("(" + str(self.mouse_x - self.board.get_position()[0] - self.board.get_margin()) + "," + 
+                                                str(self.mouse_y - self.board.get_position()[1] - self.board.get_margin()) + ")",True, BLACK)
             self.screen.blit(text_mouse, (self.mouse_x + 10, self.mouse_y))
 
     def render_points(self):
@@ -199,7 +200,8 @@ class TSP:
         if self.population is None:
             self.population = Population(Individual(self.points), self.population_size)
         if (self.population[0].size != len(self.points)):
-            self.population = Population(Individual(self.points), self.population_size)
+            # self.population = Population(Individual(self.points), self.population_size)
+            self.population.extend(self.points[self.population[0].size:])
         if (self.population.size != self.population_size):
             self.population.resize(self.population_size)
         

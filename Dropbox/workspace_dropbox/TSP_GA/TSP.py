@@ -1,10 +1,12 @@
 import pygame
 import random
+from helper import render_text
+from button import Button
 from board import Board
 from point import Point
 from individual import Individual
 from population import Population
-from constants import BACKGROUND, BLACK, WHITE
+from helper import BACKGROUND, BLACK, WHITE
 
 class TSP:
     def __init__(self):
@@ -13,23 +15,23 @@ class TSP:
         self.is_running = True
         self.screen = pygame.display.set_mode((1200, 700))
         self.mouse_x, self.mouse_y = 0, 0
-        self.board = Board(50, 50, 700, 500)
 
-        self.population_size_button_plus = Board(self.board.get_position()[0] + self.board.get_width() + 100,
+        self.board = Board(50, 50, 700, 500)
+        self.population_size_button_plus = Button(self.board.get_position()[0] + self.board.get_width() + 100,
                                                  self.board.get_position()[1] + self.board.get_height() - 500, 55, 45)
-        self.population_size_button_minus = Board(self.board.get_position()[0] + self.board.get_width() + 195,
+        self.population_size_button_minus = Button(self.board.get_position()[0] + self.board.get_width() + 195,
                                                  self.board.get_position()[1] + self.board.get_height() - 500, 55, 45)
-        self.mutation_rate_button_plus = Board(self.board.get_position()[0] + self.board.get_width() + 100,
+        self.mutation_rate_button_plus = Button(self.board.get_position()[0] + self.board.get_width() + 100,
                                                self.board.get_position()[1] + self.board.get_height() - 409, 55, 45)
-        self.mutation_rate_button_minus = Board(self.board.get_position()[0] + self.board.get_width() + 195,
+        self.mutation_rate_button_minus = Button(self.board.get_position()[0] + self.board.get_width() + 195,
                                                 self.board.get_position()[1] + self.board.get_height() - 409, 55, 45)
-        self.random_button = Board(self.board.get_position()[0] + self.board.get_width() + 100,
+        self.random_button = Button(self.board.get_position()[0] + self.board.get_width() + 100,
                                    self.board.get_position()[1] + self.board.get_height() - 318, 150, 45)
-        self.run_button = Board(self.board.get_position()[0] + self.board.get_width() + 100, 
+        self.run_button = Button(self.board.get_position()[0] + self.board.get_width() + 100, 
                                 self.board.get_position()[1] + self.board.get_height() - 227, 150, 45)
-        self.stop_button = Board(self.board.get_position()[0] + self.board.get_width() + 100,
+        self.stop_button = Button(self.board.get_position()[0] + self.board.get_width() + 100,
                                 self.board.get_position()[1] + self.board.get_height() - 136, 150, 45)
-        self.reset_button = Board(self.board.get_position()[0] + self.board.get_width() + 100, 
+        self.reset_button = Button(self.board.get_position()[0] + self.board.get_width() + 100, 
                                 self.board.get_position()[1] + self.board.get_height() - 45, 150, 45)
 
         self.font_path = pygame.font.match_font('sans')
@@ -37,7 +39,7 @@ class TSP:
         self.font_small = pygame.font.Font(self.font_path, 15)
 
         self.iteration = 0
-        self.iteration_max = 10000
+        self.iteration_max = 500000
         self.points = []
         self.point_set = set()
         self.mutation_rate = 30
@@ -70,10 +72,7 @@ class TSP:
                 elif self.stop_button.is_mouse_over(self.mouse_x, self.mouse_y):
                     self.genetic_algorithm_running = False    
                 elif self.random_button.is_mouse_over(self.mouse_x, self.mouse_y):
-                    self.population = None
-                    self.iteration = 0
-                    self.sum_distance = 0
-                    self.genetic_algorithm_running = False
+                    self.reset_for_random()
                     self.get_random_points()
                 elif self.mutation_rate_button_plus.is_mouse_over(self.mouse_x, self.mouse_y):
                     if self.mutation_rate <= 99:
@@ -98,25 +97,36 @@ class TSP:
         self.screen.fill(BACKGROUND)
         self.board.render(self.screen)
         self.render_mouse_position()
-        self.render_points()
 
-        self.render_points_count()
-        self.render_iteration()
-        self.render_population_size()
-        self.render_mutation_rate()
-        self.render_sum_distance()
         
-        self.render_button(self.run_button, "Run")
-        self.render_button(self.reset_button, "Reset")
-        self.render_button(self.stop_button, "Stop")
-        self.render_button(self.random_button, "Random")
-        self.render_button(self.mutation_rate_button_plus, "+")
-        self.render_button(self.mutation_rate_button_minus, "-")
-        self.render_button(self.population_size_button_plus, "+")
-        self.render_button(self.population_size_button_minus, "-")
+        render_text(self.screen, f"Points: {len(self.points)}", self.board.get_position()[0],
+                    self.board.get_position()[1] + self.board.get_height() + 10, self.font)
+        render_text(self.screen, f"Iteration: {self.iteration}", self.board.get_position()[0] + 100, 
+                    self.board.get_position()[1] + self.board.get_height() + 10, self.font)
+        render_text(self.screen, f"Population size: {self.population_size}",
+                    self.population_size_button_minus.get_position()[0] + self.population_size_button_minus.get_width() + 10,
+                    self.population_size_button_minus.get_position()[1] + self.population_size_button_minus.get_height() // 2, self.font)
+        render_text(self.screen, f"Mutation rate: {self.mutation_rate}",
+                    self.mutation_rate_button_minus.get_position()[0] + self.mutation_rate_button_minus.get_width() + 10,
+                    self.mutation_rate_button_minus.get_position()[1] + self.mutation_rate_button_minus.get_height() // 2, self.font)
+        render_text(self.screen, f"Sum distance: {self.sum_distance:.2f}",
+                    self.board.get_position()[0] + self.board.get_width() - 175, 
+                    self.board.get_position()[1] + self.board.get_height() + 10, self.font)
+
+        
+        self.run_button.render(self.screen, "Run", self.font)
+        self.reset_button.render(self.screen, "Reset", self.font)
+        self.stop_button.render(self.screen, "Stop", self.font)
+        self.random_button.render(self.screen, "Random", self.font)
+        self.mutation_rate_button_plus.render(self.screen, "+", self.font)
+        self.mutation_rate_button_minus.render(self.screen, "-", self.font)
+        self.population_size_button_plus.render(self.screen, "+", self.font)
+        self.population_size_button_minus.render(self.screen, "-", self.font)
 
         if self.iteration > 0:
             self.render_connected_lines()
+        for point in self.points:
+            point.render(self.screen)
 
 
     def update_mouse_position(self):
@@ -128,10 +138,6 @@ class TSP:
                                                 str(self.mouse_y - self.board.get_position()[1] - self.board.get_margin()) + ")",True, BLACK)
             self.screen.blit(text_mouse, (self.mouse_x + 10, self.mouse_y))
 
-    def render_points(self):
-        for point in self.points:
-            point.render(self.screen)
-
     def render_connected_lines(self):
         if (len(self.points) < 2):
             return
@@ -141,51 +147,15 @@ class TSP:
         if (len(self.points) > 2):
             pygame.draw.line(self.screen, BLACK, self.points[len(self.points) - 1].get_position(), self.points[0].get_position(), 3)    
 
-    def render_points_count(self):
-        text = self.font.render(f"Points: {len(self.points)}", True, BLACK)
-        self.screen.blit(text, (self.board.get_position()[0], self.board.get_position()[1] + self.board.get_height() + 10))
-
-    def render_iteration(self):
-        text = self.font.render(f"Iteration: {self.iteration}", True, BLACK)
-        self.screen.blit(text, (self.board.get_position()[0] + 100, self.board.get_position()[1] + self.board.get_height() + 10))
-
-    def render_sum_distance(self):
-        # text = self.font.render(f"Sum distance: {self.sum_distance}", True, BLACK)
-        # chỉ lấy 2 chữ số sau dấu thập phân
-        text = self.font.render(f"Sum distance: {self.sum_distance:.2f}", True, BLACK)
-        self.screen.blit(text, (self.board.get_position()[0] + self.board.get_width() - 175, 
-                                self.board.get_position()[1] + self.board.get_height() + 10))
-    
-    def render_button(self, button, text):
-        button.render(self.screen)
-        # vẽ chữ vào button
-        text_button = self.font.render(text, True, BLACK)
-        self.screen.blit(text_button, (button.get_position()[0] + button.get_width() // 2 - text_button.get_width() // 2, 
-                                       button.get_position()[1] + button.get_height() // 2 - text_button.get_height() // 2))
-        
-    # Hàm in population size
-    def render_population_size(self):
-        text = self.font.render(f"Population size: {self.population_size}", True, BLACK)
-        self.screen.blit(text, (self.population_size_button_minus.get_position()[0] + self.population_size_button_minus.get_width() + 10, 
-                                self.population_size_button_minus.get_position()[1] + text.get_height() // 2))
-        
-    def render_mutation_rate(self):
-        text = self.font.render(f"Mutation rate: {self.mutation_rate}", True, BLACK)
-        self.screen.blit(text, (self.mutation_rate_button_minus.get_position()[0] + self.mutation_rate_button_minus.get_width() + 10, 
-                                self.mutation_rate_button_minus.get_position()[1] + text.get_height() // 2))
-        
-
-
-
     def add_point(self, x, y):
         if (x, y) not in self.point_set:
-            self.points.append(Point(x, y))
+            self.points.append(Point((x, y)))
             self.point_set.add((x, y))
 
     def get_random_points(self):
         self.points = []
         self.point_set = set()
-        n = random.randint(30, 75)
+        n = random.randint(30, 200)
         for i in range(n):
             x = random.randint(self.board.get_position()[0] + self.board.get_margin(), 
                                self.board.get_position()[0] + self.board.get_width() - self.board.get_margin())
@@ -200,7 +170,6 @@ class TSP:
         if self.population is None:
             self.population = Population(Individual(self.points), self.population_size)
         if (self.population[0].size != len(self.points)):
-            # self.population = Population(Individual(self.points), self.population_size)
             self.population.extend(self.points[self.population[0].size:])
         if (self.population.size != self.population_size):
             self.population.resize(self.population_size)
@@ -212,16 +181,18 @@ class TSP:
         self.sum_distance = self.population[0].get_sum_distance()
         self.iteration += 1
 
-    def reset(self):
-        self.points = []
-        self.point_set = set()
+    def reset_for_random(self):
         self.population = None
         self.iteration = 0
-        self.iteration_max = 10000
-        self.population_size = 100
-        self.mutation_rate = 30
         self.sum_distance = 0
         self.genetic_algorithm_running = False
+
+    def reset(self):
+        self.reset_for_random()
+        self.points = []
+        self.point_set = set()
+        self.population_size = 100
+        self.mutation_rate = 30
 
 if __name__ == "__main__":
     tsp = TSP()
