@@ -1,20 +1,33 @@
 import pygame
 import random
-from helper import render_text
+from point import Point
 from button import Button
 from board import Board
 from point import Point
 from individual import Individual
 from population import Population
-from helper import BACKGROUND, BLACK, WHITE
+from helper import BACKGROUND, BLACK, render_text, render_connected_lines, render_mouse_position
 
 class TSP:
     def __init__(self):
         pygame.init()
+        self.screen = pygame.display.set_mode((1200, 700))
         self.clock = pygame.time.Clock()
         self.is_running = True
-        self.screen = pygame.display.set_mode((1200, 700))
         self.mouse_x, self.mouse_y = 0, 0
+
+        self.genetic_algorithm_running = False
+        self.iteration = 0
+        self.points = []
+        self.point_set = set()
+        self.mutation_rate = 30
+        self.sum_distance = 0
+        self.population = None
+        self.population_size = 100
+
+        self.font_path = pygame.font.match_font('sans')
+        self.font = pygame.font.Font(self.font_path, 20)
+        self.font_small = pygame.font.Font(self.font_path, 15)
 
         self.board = Board(50, 50, 700, 500)
         self.population_size_button_plus = Button(self.board.get_position()[0] + self.board.get_width() + 100,
@@ -33,22 +46,6 @@ class TSP:
                                 self.board.get_position()[1] + self.board.get_height() - 136, 150, 45)
         self.reset_button = Button(self.board.get_position()[0] + self.board.get_width() + 100, 
                                 self.board.get_position()[1] + self.board.get_height() - 45, 150, 45)
-
-        self.font_path = pygame.font.match_font('sans')
-        self.font = pygame.font.Font(self.font_path, 20)
-        self.font_small = pygame.font.Font(self.font_path, 15)
-
-        self.iteration = 0
-        self.iteration_max = 500000
-        self.points = []
-        self.point_set = set()
-        self.mutation_rate = 30
-        self.sum_distance = 0
-
-        self.population = None
-        self.population_size = 100
-        self.genetic_algorithm_running = False
-
 
     def run(self):
         while self.is_running:
@@ -89,16 +86,14 @@ class TSP:
 
     def update(self):
         self.update_mouse_position()
-        if self.genetic_algorithm_running and self.iteration < self.iteration_max:
+        if self.genetic_algorithm_running:
             self.run_genetic_algorithm()
         
     def render(self):
         pygame.display.flip()
         self.screen.fill(BACKGROUND)
         self.board.render(self.screen)
-        self.render_mouse_position()
-
-        
+        render_mouse_position(self.board, self.screen, self.mouse_x, self.mouse_y, self.font_small)
         render_text(self.screen, f"Points: {len(self.points)}", self.board.get_position()[0],
                     self.board.get_position()[1] + self.board.get_height() + 10, self.font)
         render_text(self.screen, f"Iteration: {self.iteration}", self.board.get_position()[0] + 100, 
@@ -112,7 +107,6 @@ class TSP:
         render_text(self.screen, f"Sum distance: {self.sum_distance:.2f}",
                     self.board.get_position()[0] + self.board.get_width() - 175, 
                     self.board.get_position()[1] + self.board.get_height() + 10, self.font)
-
         
         self.run_button.render(self.screen, "Run", self.font)
         self.reset_button.render(self.screen, "Reset", self.font)
@@ -124,28 +118,13 @@ class TSP:
         self.population_size_button_minus.render(self.screen, "-", self.font)
 
         if self.iteration > 0:
-            self.render_connected_lines()
+            render_connected_lines(self.points, self.screen)
+
         for point in self.points:
             point.render(self.screen)
 
-
     def update_mouse_position(self):
         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
-
-    def render_mouse_position(self):
-        if self.board.is_mouse_over(self.mouse_x, self.mouse_y):
-            text_mouse = self.font_small.render("(" + str(self.mouse_x - self.board.get_position()[0] - self.board.get_margin()) + "," + 
-                                                str(self.mouse_y - self.board.get_position()[1] - self.board.get_margin()) + ")",True, BLACK)
-            self.screen.blit(text_mouse, (self.mouse_x + 10, self.mouse_y))
-
-    def render_connected_lines(self):
-        if (len(self.points) < 2):
-            return
-        
-        for i in range(len(self.points) - 1):
-            pygame.draw.line(self.screen, BLACK, self.points[i].get_position(), self.points[i + 1].get_position(), 3)
-        if (len(self.points) > 2):
-            pygame.draw.line(self.screen, BLACK, self.points[len(self.points) - 1].get_position(), self.points[0].get_position(), 3)    
 
     def add_point(self, x, y):
         if (x, y) not in self.point_set:
@@ -169,8 +148,8 @@ class TSP:
             return
         if self.population is None:
             self.population = Population(Individual(self.points), self.population_size)
-        if (self.population[0].__size != len(self.points)):
-            self.population.extend(self.points[self.population[0].__size:])
+        if (self.population[0].get_size() != len(self.points)):
+            self.population.extend(self.points[self.population[0].get_size():])
         if (self.population.size != self.population_size):
             self.population.resize(self.population_size)
         
@@ -178,7 +157,8 @@ class TSP:
         new_population = self.population.generate_new_population()
         self.population.natural_selection(new_population)
         self.points = self.population[0].get_list()
-        self.sum_distance = self.population[0].__get_sum_distance()
+        self.sum_distance = self.population[0].get_sum_distance()
+    
         self.iteration += 1
 
     def reset_for_random(self):
@@ -193,6 +173,8 @@ class TSP:
         self.point_set = set()
         self.population_size = 100
         self.mutation_rate = 30
+
+
 
 if __name__ == "__main__":
     tsp = TSP()
