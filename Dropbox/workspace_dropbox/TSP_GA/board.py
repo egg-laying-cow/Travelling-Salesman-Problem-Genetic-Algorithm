@@ -8,7 +8,6 @@ class Board:
         self._width = width
         self._height = height
         self._margin = margin
-        self.points = []
 
     def get_margin(self):
         return self._margin

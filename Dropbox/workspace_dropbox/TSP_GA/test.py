@@ -6,7 +6,7 @@ from board import Board
 from point import Point
 from individual import Individual
 from population import Population
-from helper import BACKGROUND, BLACK, render_text, render_connected_lines, render_mouse_position
+from helper import BACKGROUND, BLACK, render_text, render_connected_lines, render_mouse_position, render_points
 
 class TSP:
     def __init__(self):
@@ -119,9 +119,7 @@ class TSP:
 
         if self.iteration > 0:
             render_connected_lines(self.points, self.screen)
-
-        for point in self.points:
-            point.render(self.screen)
+        render_points(self.points, self.screen)
 
     def update_mouse_position(self):
         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
@@ -150,13 +148,13 @@ class TSP:
             self.population = Population(Individual(self.points), self.population_size)
         if (self.population[0].get_size() != len(self.points)):
             self.population.extend(self.points[self.population[0].get_size():])
-        if (self.population.size != self.population_size):
+        if (self.population.get_size() != self.population_size):
             self.population.resize(self.population_size)
         
         self.population.set_mutate_rate(self.mutation_rate)
-        new_population = self.population.generate_new_population()
+        new_population = self.population.generate_new_population(mutate_func_id = 0)
         self.population.natural_selection(new_population)
-        self.points = self.population[0].get_list()
+        self.points = self.population.get_best_individual()
         self.sum_distance = self.population[0].get_sum_distance()
     
         self.iteration += 1

@@ -14,6 +14,11 @@ ORANGE = (255,125,25)
 GRAPE = (100,25,125)
 GRASS = (55,155,65)
 
+def render_points(points, screen: pygame.Surface) -> None:
+    for point in points:
+        pygame.draw.circle(screen, RED, (point.get_position()[0], point.get_position()[1]), 4)
+        pygame.draw.circle(screen, WHITE, (point.get_position()[0], point.get_position()[1]), 2)
+
 def render_text(screen, text, x, y, font):
     text = font.render(text, True, BLACK)
     screen.blit(text, (x, y))

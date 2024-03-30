@@ -150,7 +150,7 @@ class TSP:
             self.population = Population(Individual(self.points), self.population_size)
         if (self.population[0].get_size() != len(self.points)):
             self.population.extend(self.points[self.population[0].get_size():])
-        if (self.population.size != self.population_size):
+        if (self.population.__size != self.population_size):
             self.population.resize(self.population_size)
         
         self.population.set_mutate_rate(self.mutation_rate)
