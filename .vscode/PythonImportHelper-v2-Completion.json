@@ -145,14 +145,6 @@
         "documentation": {}
     },
     {
-        "label": "Individual",
-        "importPath": "individual",
-        "description": "individual",
-        "isExtraImport": true,
-        "detail": "individual",
-        "documentation": {}
-    },
-    {
         "label": "Point",
         "importPath": "point",
         "description": "point",
@@ -174,30 +166,6 @@
         "description": "point",
         "isExtraImport": true,
         "detail": "point",
-        "documentation": {}
-    },
-    {
-        "label": "Point",
-        "importPath": "point",
-        "description": "point",
-        "isExtraImport": true,
-        "detail": "point",
-        "documentation": {}
-    },
-    {
-        "label": "Point",
-        "importPath": "point",
-        "description": "point",
-        "isExtraImport": true,
-        "detail": "point",
-        "documentation": {}
-    },
-    {
-        "label": "Population",
-        "importPath": "population",
-        "description": "population",
-        "isExtraImport": true,
-        "detail": "population",
         "documentation": {}
     },
     {
@@ -427,7 +395,7 @@
         "kind": 6,
         "importPath": "Dropbox.workspace_dropbox.TSP_GA.point",
         "description": "Dropbox.workspace_dropbox.TSP_GA.point",
-        "peekOfCode": "class Point:\n    def __init__(self, position: tuple[int, int]):\n        self.__position = position\n    def get_position(self):\n        return self.__position\n    def get_distance_to(self, other: \"Point\") -> float:\n        return ((self.__position[0] - other.get_position()[0])**2 + (self.__position[1] - other.get_position()[1])**2)**0.5\nif __name__ == \"__main__\":\n    a = Point((0, 0))\n    b = Point((1, 1))",
+        "peekOfCode": "class Point(tuple):   \n    def __new__(cls, x, y):\n        return super().__new__(cls, (x, y))\n    def get_distance_to(self, other: \"Point\") -> float:\n        return ((self[0] - other[0])**2 + (self[1] - other[1])**2)**0.5",
         "detail": "Dropbox.workspace_dropbox.TSP_GA.point",
         "documentation": {}
     },

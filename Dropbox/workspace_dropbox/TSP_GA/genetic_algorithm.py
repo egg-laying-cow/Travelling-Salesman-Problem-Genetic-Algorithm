@@ -33,14 +33,14 @@ class GeneticAlgorithm:
         self.__population.natural_selection(new_population)
 
     def extend(self, cities: list[tuple[int, int]]):
-        points = [Point(city) for city in cities]
+        points = [Point(city[0], city[1]) for city in cities]
         self.__population.extend(points)
 
     def get_best_individual(self):
         return self.__population.get_best_individual()
 
     def __create_population(self, cities: list[tuple[int, int]], population_size):
-        individual = Individual([Point(city) for city in cities])
+        individual = Individual([Point(city[0], city[1]) for city in cities])
         population = Population(individual, population_size)
         return population
 

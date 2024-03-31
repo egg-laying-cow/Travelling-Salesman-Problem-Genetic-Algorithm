@@ -29,8 +29,8 @@ class Individual:
         return self.__sum_distance
     
     def get_list(self) -> list:
-        z = [point.get_position() for point in self.__list]
-        return z
+        # z = [point.get_position() for point in self.__list]
+        return self.__list.copy()
     
     def get_size(self) -> int:
         return len(self.__list)

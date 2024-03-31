@@ -1,11 +1,7 @@
 import pygame
 import random
-from point import Point
 from button import Button
 from board import Board
-from point import Point
-from individual import Individual
-from population import Population
 from genetic_algorithm import GeneticAlgorithm
 from helper import BACKGROUND, BLACK, render_text, render_connected_lines, render_mouse_position, render_points
 
