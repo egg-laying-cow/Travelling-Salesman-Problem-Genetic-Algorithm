@@ -33,30 +33,6 @@
         "documentation": {}
     },
     {
-        "label": "BLACK",
-        "importPath": "helper",
-        "description": "helper",
-        "isExtraImport": true,
-        "detail": "helper",
-        "documentation": {}
-    },
-    {
-        "label": "WHITE",
-        "importPath": "helper",
-        "description": "helper",
-        "isExtraImport": true,
-        "detail": "helper",
-        "documentation": {}
-    },
-    {
-        "label": "RED",
-        "importPath": "helper",
-        "description": "helper",
-        "isExtraImport": true,
-        "detail": "helper",
-        "documentation": {}
-    },
-    {
         "label": "BACKGROUND",
         "importPath": "helper",
         "description": "helper",
@@ -121,30 +97,6 @@
         "documentation": {}
     },
     {
-        "label": "Individual",
-        "importPath": "individual",
-        "description": "individual",
-        "isExtraImport": true,
-        "detail": "individual",
-        "documentation": {}
-    },
-    {
-        "label": "Individual",
-        "importPath": "individual",
-        "description": "individual",
-        "isExtraImport": true,
-        "detail": "individual",
-        "documentation": {}
-    },
-    {
-        "label": "Individual",
-        "importPath": "individual",
-        "description": "individual",
-        "isExtraImport": true,
-        "detail": "individual",
-        "documentation": {}
-    },
-    {
         "label": "Point",
         "importPath": "point",
         "description": "point",
@@ -166,6 +118,22 @@
         "description": "point",
         "isExtraImport": true,
         "detail": "point",
+        "documentation": {}
+    },
+    {
+        "label": "Individual",
+        "importPath": "individual",
+        "description": "individual",
+        "isExtraImport": true,
+        "detail": "individual",
+        "documentation": {}
+    },
+    {
+        "label": "Individual",
+        "importPath": "individual",
+        "description": "individual",
+        "isExtraImport": true,
+        "detail": "individual",
         "documentation": {}
     },
     {
@@ -224,7 +192,7 @@
         "kind": 6,
         "importPath": "Dropbox.workspace_dropbox.TSP_GA.genetic_algorithm",
         "description": "Dropbox.workspace_dropbox.TSP_GA.genetic_algorithm",
-        "peekOfCode": "class GeneticAlgorithm:\n    def __init__(self, cities, population_size, mutation_rate, mutate_func_id):\n        self.__population = self.__create_population(cities, population_size)\n        self.__mutate_func_id = mutate_func_id\n        self.__population.set_mutate_rate(mutation_rate)\n        self.__mutation_rate = mutation_rate\n    def get_size(self):\n        return self.__population.get_size()\n    def get_individual_size(self):\n        return self.__population[0].get_size()",
+        "peekOfCode": "class GeneticAlgorithm:\n    def __init__(self, cities, population_size, mutation_rate, mutate_func_id):\n        self.__population = self.__create_population(cities, population_size)\n        self.__mutate_func_id = mutate_func_id\n        self.__population.set_mutate_rate(mutation_rate)\n        self.__mutation_rate = mutation_rate\n    def get_population_size(self):\n        return self.__population.get_size()\n    def get_individual_size(self):\n        return self.__population[0].get_size()",
         "detail": "Dropbox.workspace_dropbox.TSP_GA.genetic_algorithm",
         "documentation": {}
     },
@@ -395,7 +363,7 @@
         "kind": 6,
         "importPath": "Dropbox.workspace_dropbox.TSP_GA.point",
         "description": "Dropbox.workspace_dropbox.TSP_GA.point",
-        "peekOfCode": "class Point(tuple):   \n    def __new__(cls, x, y):\n        return super().__new__(cls, (x, y))\n    def get_distance_to(self, other: \"Point\") -> float:\n        return ((self[0] - other[0])**2 + (self[1] - other[1])**2)**0.5",
+        "peekOfCode": "class Point(tuple):   \n    def __new__(cls, position: tuple):\n        return super().__new__(cls, position)\n    def get_distance_to(self, other: \"Point\") -> float:\n        return ((self[0] - other[0])**2 + (self[1] - other[1])**2)**0.5",
         "detail": "Dropbox.workspace_dropbox.TSP_GA.point",
         "documentation": {}
     },

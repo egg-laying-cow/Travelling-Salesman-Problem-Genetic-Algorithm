@@ -24,10 +24,8 @@ class Population:
             self.__list = self.__list[:new_size]
         elif new_size > len(self.__list):
             while len(self.__list) < new_size:
-                points = self.__list[0][:-1]
-                random.shuffle(points)
-                points.append(self.__list[0][-1])
-                self.__list.append(Individual(points))
+                new_individual = self.__list[0].create_new_individual()
+                self.__list.append(new_individual)
             self.__list.sort(key = lambda x: x.get_sum_distance())
 
     def extend(self, points: list["Point"]):
@@ -38,10 +36,8 @@ class Population:
     def __init_population(self, individual : "Individual", population_size) -> list:
         population = [individual]
         for i in range(population_size - 1):
-            points = individual[:-1]
-            random.shuffle(points)
-            points.append(individual[-1])
-            population.append(Individual(points))
+            new_individual = individual.create_new_individual()
+            population.append(new_individual)
         population.sort(key = lambda x: x.get_sum_distance())
         return population
     
@@ -54,7 +50,6 @@ class Population:
         for point in parent2:
             if point not in child:
                 child.append(point)
-
         child = Individual(child)
         child.mutate(self.__mutation_rate, mutate_func_id)
         return child

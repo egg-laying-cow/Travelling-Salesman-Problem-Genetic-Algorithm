@@ -13,6 +13,12 @@ class Individual:
             4: self.__swap_mutate
         }
 
+    def create_new_individual(self):
+        points = self.__list[:-1]
+        random.shuffle(points)
+        points.append(self.__list[-1])
+        return Individual(points)
+
     def __getitem__(self, index: int):
         return self.__list[index]
 
@@ -29,7 +35,6 @@ class Individual:
         return self.__sum_distance
     
     def get_list(self) -> list:
-        # z = [point.get_position() for point in self.__list]
         return self.__list.copy()
     
     def get_size(self) -> int:
@@ -82,27 +87,9 @@ class Individual:
         i, j = random.sample(range(0, len(self.__list) - 1), 2)
         self.__list.insert(i, self.__list.pop(j))
     
-    
     def __swap_mutate(self):
         i, j = random.sample(range(0, len(self.__list) - 1), 2)
         self.__list[i], self.__list[j] = self.__list[j], self.__list[i]
 
-
-
-if (__name__ == "__main__"):
-    # test mutate functions
-    points = [Point((0, 1)), Point((1, 2)), Point((2, 3)), Point((3, 4)), Point((4, 5)),
-            Point((5, 6)), Point((6, 7)), Point((7, 8)), Point((8, 9)), Point((9, 10))]
-    individual = Individual(points)
-    # print("Before mutate:")
-    # for point in individual.get_list():
-    #     print(point.get_position())
-    # individual.mutate(100, 4)
-    # print("After mutate:")
-    # for point in individual.get_list():
-    #     print(point.get_position())
-
-    print(individual.get_mutate_function_name(1))
-    
     
     

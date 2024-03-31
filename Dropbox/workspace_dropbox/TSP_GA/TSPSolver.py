@@ -153,8 +153,8 @@ class TSP:
             self.ga = GeneticAlgorithm(self.points, self.population_size, self.mutation_rate, 0)
         if (self.ga.get_individual_size() < len(self.points)):    
             self.ga.extend(self.points[self.ga.get_individual_size():])
-        if (self.ga.get_size() != self.population_size):
-            self.ga.resize(self.population_size)
+        if (self.ga.get_population_size() != self.population_size):
+            self.ga.resize_population(self.population_size)
 
 
         
