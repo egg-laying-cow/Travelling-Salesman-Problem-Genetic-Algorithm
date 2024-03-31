@@ -16,21 +16,21 @@ GRASS = (55,155,65)
 
 def render_points(points, screen: pygame.Surface) -> None:
     for point in points:
-        pygame.draw.circle(screen, RED, (point.get_position()[0], point.get_position()[1]), 4)
-        pygame.draw.circle(screen, WHITE, (point.get_position()[0], point.get_position()[1]), 2)
+        pygame.draw.circle(screen, RED, (point[0], point[1]), 4)
+        pygame.draw.circle(screen, WHITE, (point[0], point[1]), 2)
 
 def render_text(screen, text, x, y, font):
     text = font.render(text, True, BLACK)
     screen.blit(text, (x, y))
 
-def render_connected_lines(points, screen):
+def render_connected_lines(points: list, screen):
     if (len(points) < 2):
         return
     
     for i in range(len(points) - 1):
-        pygame.draw.line(screen, BLACK, points[i].get_position(), points[i + 1].get_position(), 3)
+        pygame.draw.line(screen, BLACK, points[i], points[i + 1], 3)
     if (len(points) > 2):
-        pygame.draw.line(screen, BLACK, points[len(points) - 1].get_position(), points[0].get_position(), 3)
+        pygame.draw.line(screen, BLACK, points[len(points) - 1], points[0], 3)
 
 def render_mouse_position(board, screen, mouse_x, mouse_y, font):
     if board.is_mouse_over(mouse_x, mouse_y):

@@ -6,6 +6,7 @@ from board import Board
 from point import Point
 from individual import Individual
 from population import Population
+from genetic_algorithm import GeneticAlgorithm
 from helper import BACKGROUND, BLACK, render_text, render_connected_lines, render_mouse_position, render_points
 
 class TSP:
@@ -22,7 +23,9 @@ class TSP:
         self.point_set = set()
         self.mutation_rate = 30
         self.sum_distance = 0
-        self.population = None
+        # self.population = None
+        self.ga = None
+        
         self.population_size = 100
 
         self.font_path = pygame.font.match_font('sans')
@@ -126,7 +129,7 @@ class TSP:
 
     def add_point(self, x, y):
         if (x, y) not in self.point_set:
-            self.points.append(Point((x, y)))
+            self.points.append((x, y))
             self.point_set.add((x, y))
 
     def get_random_points(self):
@@ -144,23 +147,38 @@ class TSP:
     def run_genetic_algorithm(self):
         if (len(self.points) < 2):
             return
-        if self.population is None:
-            self.population = Population(Individual(self.points), self.population_size)
-        if (self.population[0].get_size() != len(self.points)):
-            self.population.extend(self.points[self.population[0].get_size():])
-        if (self.population.get_size() != self.population_size):
-            self.population.resize(self.population_size)
+        # if self.population is None:
+        #     self.population = Population(Individual(self.points), self.population_size)
+        # if (self.population[0].get_size() != len(self.points)):
+        #     self.population.extend(self.points[self.population[0].get_size():])
+        # if (self.population.get_size() != self.population_size):
+        #     self.population.resize(self.population_size)
+        if self.ga is None:
+            self.ga = GeneticAlgorithm(self.points, self.population_size, self.mutation_rate, 0)
+        if (self.ga.get_individual_size() < len(self.points)):    
+            self.ga.extend(self.points[self.ga.get_individual_size():])
+        if (self.ga.get_size() != self.population_size):
+            self.ga.resize(self.population_size)
+
+
         
-        self.population.set_mutate_rate(self.mutation_rate)
-        new_population = self.population.generate_new_population(mutate_func_id = 0)
-        self.population.natural_selection(new_population)
-        self.points = self.population.get_best_individual()
-        self.sum_distance = self.population[0].get_sum_distance()
+        # self.population.set_mutate_rate(self.mutation_rate)
+        # new_population = self.population.generate_new_population(mutate_func_id = 0)
+        # self.population.natural_selection(new_population)
+        
+        # self.points = self.population.get_best_individual()
+        # self.sum_distance = self.population[0].get_sum_distance()
+            
+        self.ga.set_mutate_rate(self.mutation_rate)
+        self.ga.run()
+        self.points = self.ga.get_best_individual()
+        self.sum_distance = self.ga.get_best_sum_distance()
     
         self.iteration += 1
 
     def reset_for_random(self):
-        self.population = None
+        # self.population = None
+        self.ga = None
         self.iteration = 0
         self.sum_distance = 0
         self.genetic_algorithm_running = False
