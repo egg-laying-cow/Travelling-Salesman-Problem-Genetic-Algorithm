@@ -19,7 +19,6 @@ class TSP:
         self.point_set = set()
         self.mutation_rate = 30
         self.sum_distance = 0
-        # self.population = None
         self.ga = None
         
         self.population_size = 100

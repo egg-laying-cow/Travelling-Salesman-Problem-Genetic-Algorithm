@@ -5,16 +5,9 @@ from point import Point
 class Population:
     def __init__(self, individual : "Individual", population_size : int, mutation_rate = 30):
         self.__list = self.__init_population(individual, population_size)
-        self.__mutation_rate = mutation_rate
 
     def __getitem__(self, index: int) -> Individual:
         return self.__list[index]
-    
-    def get_mutate_rate(self):
-        return self.__mutation_rate
-    
-    def set_mutate_rate(self, rate):
-        self.__mutation_rate = rate
 
     def get_size(self):
         return len(self.__list)
@@ -44,17 +37,17 @@ class Population:
     def get_best_individual(self) -> Individual:
         return self.__list[0].get_list()
         
-    def crossover(self, parent1: "Individual", parent2: "Individual", mutate_func_id: int) -> "Individual":
+    def crossover(self, parent1: "Individual", parent2: "Individual", mutation_rate, mutate_func_id: int) -> "Individual":
         p = random.randint(1, parent1.get_size() - 1)
         child = parent1[:p]
         for point in parent2:
             if point not in child:
                 child.append(point)
         child = Individual(child)
-        child.mutate(self.__mutation_rate, mutate_func_id)
+        child.mutate(mutation_rate, mutate_func_id)
         return child
     
-    def generate_new_population(self, mutate_func_id) -> list:
+    def generate_new_population(self, mutation_rate, mutate_func_id) -> list:
         population = self.__list[:(len(self.__list) // 2)]
         population1 = self.__list[:((len(self.__list) * 3) // 4)]
 
@@ -62,9 +55,9 @@ class Population:
         for i in range(len(self.__list)):
             parent1 = random.choice(population)
             parent2 = random.choice(population1)
-            child1 = self.crossover(parent1, parent2, mutate_func_id)
+            child1 = self.crossover(parent1, parent2, mutation_rate, mutate_func_id)
             new_population.append(child1)
-            child2 = self.crossover(parent2, parent1, mutate_func_id)
+            child2 = self.crossover(parent2, parent1, mutation_rate, mutate_func_id)
             new_population.append(child2)
         new_population.sort(key = lambda x: x.get_sum_distance())
         return new_population

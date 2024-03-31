@@ -192,7 +192,7 @@
         "kind": 6,
         "importPath": "Dropbox.workspace_dropbox.TSP_GA.genetic_algorithm",
         "description": "Dropbox.workspace_dropbox.TSP_GA.genetic_algorithm",
-        "peekOfCode": "class GeneticAlgorithm:\n    def __init__(self, cities, population_size, mutation_rate, mutate_func_id):\n        self.__population = self.__create_population(cities, population_size)\n        self.__mutate_func_id = mutate_func_id\n        self.__population.set_mutate_rate(mutation_rate)\n        self.__mutation_rate = mutation_rate\n    def get_population_size(self):\n        return self.__population.get_size()\n    def get_individual_size(self):\n        return self.__population[0].get_size()",
+        "peekOfCode": "class GeneticAlgorithm:\n    def __init__(self, cities, population_size, mutation_rate, mutate_func_id):\n        self.__population = self.__create_population(cities, population_size)\n        self.__mutate_func_id = mutate_func_id\n        self.__mutation_rate = mutation_rate\n    def get_population_size(self):\n        return self.__population.get_size()\n    def get_individual_size(self):\n        return self.__population[0].get_size()\n    def get_mutate_rate(self):",
         "detail": "Dropbox.workspace_dropbox.TSP_GA.genetic_algorithm",
         "documentation": {}
     },
@@ -372,7 +372,7 @@
         "kind": 6,
         "importPath": "Dropbox.workspace_dropbox.TSP_GA.population",
         "description": "Dropbox.workspace_dropbox.TSP_GA.population",
-        "peekOfCode": "class Population:\n    def __init__(self, individual : \"Individual\", population_size : int, mutation_rate = 30):\n        self.__list = self.__init_population(individual, population_size)\n        self.__mutation_rate = mutation_rate\n    def __getitem__(self, index: int) -> Individual:\n        return self.__list[index]\n    def get_mutate_rate(self):\n        return self.__mutation_rate\n    def set_mutate_rate(self, rate):\n        self.__mutation_rate = rate",
+        "peekOfCode": "class Population:\n    def __init__(self, individual : \"Individual\", population_size : int, mutation_rate = 30):\n        self.__list = self.__init_population(individual, population_size)\n    def __getitem__(self, index: int) -> Individual:\n        return self.__list[index]\n    def get_size(self):\n        return len(self.__list)\n    def resize(self, new_size : int):\n        if new_size < len(self.__list):\n            self.__list = self.__list[:new_size]",
         "detail": "Dropbox.workspace_dropbox.TSP_GA.population",
         "documentation": {}
     },
