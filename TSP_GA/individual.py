@@ -5,13 +5,13 @@ class Individual:
     def __init__(self, points: list[Point]):
         self.__list = points
         self.__sum_distance = self.__get_sum_distance()
-        self.__mutate_functions = {
-            0: self.__inversion_mutate,
-            1: self.__displacement_mutate,
-            2: self.__scramble_mutate,
-            3: self.__insert_mutate,
-            4: self.__swap_mutate
-        }
+        self.__mutate_functions = (
+            self.__inversion_mutate,
+            self.__displacement_mutate,
+            self.__scramble_mutate,
+            self.__insert_mutate,
+            self.__swap_mutate
+        )
 
     def create_new_individual(self):
         points = self.__list[:-1]
@@ -28,8 +28,8 @@ class Individual:
             for i in range(len(self.__list) - 1):
                 sum_distance += self.__list[i].get_distance_to(self.__list[i + 1])
             if (len(self.__list) > 2):
-                sum_distance += self.__list[len(self.__list) - 1].get_distance_to(self.__list[0])
-        return sum_distance
+                sum_distance += self.__list[-1].get_distance_to(self.__list[0])
+        return sum_distance    
     
     def get_sum_distance(self) -> float:
         return self.__sum_distance
@@ -54,31 +54,24 @@ class Individual:
     def mutate(self, mutation_rate: int, mutate_func_id: int) -> None:
         if len(self.__list) < 3:
             return
-        mutate_func_id = mutate_func_id % len(self.__mutate_functions)
-        c = random.randint(0, 100)
-        if c < mutation_rate:
-            self.__mutate_functions[mutate_func_id]()
+
+        if random.randint(0, 100) < mutation_rate:
+            self.__mutate_functions[mutate_func_id % len(self.__mutate_functions)]()
             self.__sum_distance = self.__get_sum_distance()
 
     def __displacement_mutate(self):
-        i, j = random.sample(range(0, len(self.__list) - 1), 2)
-        if i > j:
-            i, j = j, i
+        i, j = sorted(random.sample(range(0, len(self.__list) - 1), 2))
         temp = self.__list[i:j+1]
         self.__list = self.__list[:i] + self.__list[j+1:]
         k = random.randint(0, len(self.__list) - 1)
         self.__list = self.__list[:k] + temp + self.__list[k:]
     
     def __inversion_mutate(self): ####
-        i, j = random.sample(range(0, len(self.__list) - 1), 2)
-        if i > j:
-            i, j = j, i
+        i, j = sorted(random.sample(range(0, len(self.__list) - 1), 2))
         self.__list[i:j+1] = self.__list[i:j+1][::-1]
     
     def __scramble_mutate(self):
-        i, j = random.sample(range(0, len(self.__list) - 1), 2)
-        if i > j:
-            i, j = j, i
+        i, j = sorted(random.sample(range(0, len(self.__list) - 1), 2))
         temp = self.__list[i:j+1]
         random.shuffle(temp)
         self.__list[i:j+1] = temp

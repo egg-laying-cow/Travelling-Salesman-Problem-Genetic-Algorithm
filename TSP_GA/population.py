@@ -36,52 +36,58 @@ class Population:
     
     def get_best_individual(self) -> Individual:
         return self.__list[0].get_list()
-        
+    
     def crossover(self, parent1: "Individual", parent2: "Individual", mutation_rate, mutate_func_id: int) -> "Individual":
         p = random.randint(1, parent1.get_size() - 1)
         child = parent1[:p]
-        for point in parent2:
-            if point not in child:
-                child.append(point)
+
+        child_set = set(child)
+        child.extend([point for point in parent2 if point not in child_set])
+
         child = Individual(child)
         child.mutate(mutation_rate, mutate_func_id)
         return child
     
     def generate_new_population(self, mutation_rate, mutate_func_id) -> list:
-        population = self.__list[:(len(self.__list) // 2)]
-        population1 = self.__list[:((len(self.__list) * 3) // 4)]
+        population1 = self.__list[:(len(self.__list) // 2)]
+        population2 = self.__list
 
         new_population = []
-        for i in range(len(self.__list)):
-            parent1 = random.choice(population)
-            parent2 = random.choice(population1)
-            child1 = self.crossover(parent1, parent2, mutation_rate, mutate_func_id)
-            new_population.append(child1)
-            child2 = self.crossover(parent2, parent1, mutation_rate, mutate_func_id)
-            new_population.append(child2)
+        for _ in range(len(self.__list)):
+            parent1 = random.choice(population1)
+            parent2 = random.choice(population2)
+            new_population.append(self.crossover(parent1, parent2, mutation_rate, mutate_func_id))
+            new_population.append(self.crossover(parent2, parent1, mutation_rate, mutate_func_id))
         new_population.sort(key = lambda x: x.get_sum_distance())
         return new_population
     
     def natural_selection(self, new_population : list):
         """Chọn lọc tự nhiên"""
-        population = []
+        population1 = self.__list
+        population2 = new_population
+
+        population1_length = len(population1)
+        population2_length = len(population2)
+
+        merged_population = []
 
         # chọn lọc tự nhiên, để số lượng cá thể không thay đổi
         i, j = 0, 0
-        while (len(population) < len(self.__list)):
-            if i >= len(self.__list):
-                population.append(new_population[j])
+        while (len(merged_population) < population1_length):
+            if i >= population1_length:
+                merged_population.append(population2[j])
                 j += 1
-            elif (j >= len(new_population)):
-                population.append(self.__list[i])
+            elif j >= population2_length:
+                merged_population.append(population1[i])
                 i += 1
-            elif (self.__list[i].get_sum_distance() < new_population[j].get_sum_distance()):
-                population.append(self.__list[i])
+            elif population1[i].get_sum_distance() < population2[j].get_sum_distance():
+                merged_population.append(population1[i])
                 i += 1
             else:
-                population.append(new_population[j])
+                merged_population.append(population2[j])
                 j += 1
-        self.__list = population
+                
+        self.__list = merged_population
     
     def check_stop_condition(self) -> bool:
         """Kiểm tra điều kiện dừng"""

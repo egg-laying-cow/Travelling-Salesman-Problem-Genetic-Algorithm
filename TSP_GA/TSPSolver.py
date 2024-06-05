@@ -130,7 +130,7 @@ class TSP:
     def get_random_points(self):
         self.points = []
         self.point_set = set()
-        n = random.randint(30, 200)
+        n = random.randint(30, 150)
         for i in range(n):
             x = random.randint(self.board.get_position()[0] + self.board.get_margin(), 
                                self.board.get_position()[0] + self.board.get_width() - self.board.get_margin())
@@ -142,27 +142,13 @@ class TSP:
     def run_genetic_algorithm(self):
         if (len(self.points) < 2):
             return
-        # if self.population is None:
-        #     self.population = Population(Individual(self.points), self.population_size)
-        # if (self.population[0].get_size() != len(self.points)):
-        #     self.population.extend(self.points[self.population[0].get_size():])
-        # if (self.population.get_size() != self.population_size):
-        #     self.population.resize(self.population_size)
+        
         if self.ga is None:
             self.ga = GeneticAlgorithm(self.points, self.population_size, self.mutation_rate, 0)
         if (self.ga.get_individual_size() < len(self.points)):    
             self.ga.extend(self.points[self.ga.get_individual_size():])
         if (self.ga.get_population_size() != self.population_size):
             self.ga.resize_population(self.population_size)
-
-
-        
-        # self.population.set_mutate_rate(self.mutation_rate)
-        # new_population = self.population.generate_new_population(mutate_func_id = 0)
-        # self.population.natural_selection(new_population)
-        
-        # self.points = self.population.get_best_individual()
-        # self.sum_distance = self.population[0].get_sum_distance()
             
         self.ga.set_mutate_rate(self.mutation_rate)
         self.ga.run()
@@ -172,7 +158,6 @@ class TSP:
         self.iteration += 1
 
     def reset_for_random(self):
-        # self.population = None
         self.ga = None
         self.iteration = 0
         self.sum_distance = 0
@@ -184,8 +169,6 @@ class TSP:
         self.point_set = set()
         self.population_size = 100
         self.mutation_rate = 30
-
-
 
 if __name__ == "__main__":
     tsp = TSP()
