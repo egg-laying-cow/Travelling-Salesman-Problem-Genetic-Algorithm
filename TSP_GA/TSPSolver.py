@@ -1,5 +1,5 @@
 import pygame
-import random
+from random import randint
 from button import Button
 from board import Board
 from genetic_algorithm import GeneticAlgorithm
@@ -130,11 +130,11 @@ class TSP:
     def get_random_points(self):
         self.points = []
         self.point_set = set()
-        n = random.randint(30, 150)
+        n = randint(30, 150)
         for i in range(n):
-            x = random.randint(self.board.get_position()[0] + self.board.get_margin(), 
+            x = randint(self.board.get_position()[0] + self.board.get_margin(), 
                                self.board.get_position()[0] + self.board.get_width() - self.board.get_margin())
-            y = random.randint(self.board.get_position()[1] + self.board.get_margin(), 
+            y = randint(self.board.get_position()[1] + self.board.get_margin(), 
                                self.board.get_position()[1] + self.board.get_height() - self.board.get_margin())
             self.add_point(x, y)
     

@@ -1,4 +1,4 @@
-import random
+from random import randint, choice
 from individual import Individual
 from point import Point
 
@@ -38,11 +38,11 @@ class Population:
         return self.__list[0].get_list()
     
     def crossover(self, parent1: "Individual", parent2: "Individual", mutation_rate, mutate_func_id: int) -> "Individual":
-        p = random.randint(1, parent1.get_size() - 1)
+        p = randint(1, parent1.get_size() - 1)
         child = parent1[:p]
 
         child_set = set(child)
-        child.extend([point for point in parent2 if point not in child_set])
+        child.extend(point for point in parent2 if point not in child_set)
 
         child = Individual(child)
         child.mutate(mutation_rate, mutate_func_id)
@@ -54,8 +54,8 @@ class Population:
 
         new_population = []
         for _ in range(len(self.__list)):
-            parent1 = random.choice(population1)
-            parent2 = random.choice(population2)
+            parent1 = choice(population1)
+            parent2 = choice(population2)
             new_population.append(self.crossover(parent1, parent2, mutation_rate, mutate_func_id))
             new_population.append(self.crossover(parent2, parent1, mutation_rate, mutate_func_id))
         new_population.sort(key = lambda x: x.get_sum_distance())

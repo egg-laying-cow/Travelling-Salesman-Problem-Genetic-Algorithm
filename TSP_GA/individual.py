@@ -1,4 +1,4 @@
-import random
+from random import randint, shuffle
 from point import Point
 
 class Individual:
@@ -15,7 +15,7 @@ class Individual:
 
     def create_new_individual(self):
         points = self.__list[:-1]
-        random.shuffle(points)
+        shuffle(points)
         points.append(self.__list[-1])
         return Individual(points)
 
@@ -55,33 +55,45 @@ class Individual:
         if len(self.__list) < 3:
             return
 
-        if random.randint(0, 100) < mutation_rate:
+        if randint(0, 100) < mutation_rate:
             self.__mutate_functions[mutate_func_id % len(self.__mutate_functions)]()
             self.__sum_distance = self.__get_sum_distance()
 
     def __displacement_mutate(self):
-        i, j = sorted(random.sample(range(0, len(self.__list) - 1), 2))
+        length_list = len(self.__list)
+        i = randint(0, length_list - 3)
+        j = randint(i + 1, length_list - 2)
+
         temp = self.__list[i:j+1]
         self.__list = self.__list[:i] + self.__list[j+1:]
-        k = random.randint(0, len(self.__list) - 1)
+        k = randint(0, len(self.__list) - 1)
         self.__list = self.__list[:k] + temp + self.__list[k:]
-    
+
     def __inversion_mutate(self): ####
-        i, j = sorted(random.sample(range(0, len(self.__list) - 1), 2))
+        length_list = len(self.__list)
+        i = randint(0, length_list - 3)
+        j = randint(i + 1, length_list - 2)
         self.__list[i:j+1] = self.__list[i:j+1][::-1]
     
     def __scramble_mutate(self):
-        i, j = sorted(random.sample(range(0, len(self.__list) - 1), 2))
+        length_list = len(self.__list)
+        i = randint(0, length_list - 3)
+        j = randint(i + 1, length_list - 2)
+
         temp = self.__list[i:j+1]
-        random.shuffle(temp)
+        shuffle(temp)
         self.__list[i:j+1] = temp
 
     def __insert_mutate(self):
-        i, j = random.sample(range(0, len(self.__list) - 1), 2)
+        length_list = len(self.__list)
+        i = randint(0, length_list - 3)
+        j = randint(i + 1, length_list - 2)
         self.__list.insert(i, self.__list.pop(j))
     
     def __swap_mutate(self):
-        i, j = random.sample(range(0, len(self.__list) - 1), 2)
+        length_list = len(self.__list)
+        i = randint(0, length_list - 3)
+        j = randint(i + 1, length_list - 2)
         self.__list[i], self.__list[j] = self.__list[j], self.__list[i]
 
     
